@@ -1,31 +1,25 @@
-# Utilise une image PHP avec Apache
-FROM php:8.1-apache
+# Utiliser l'image officielle PHP avec Apache
+FROM php:8.2-apache
 
-# Installe les dépendances nécessaires pour Symfony
+# Installer les dépendances système
 RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libxml2-dev \
-    zlib1g-dev \
-    git \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql xml zip
+    unzip git curl libpq-dev libzip-dev libonig-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip
 
-# Active le module Apache pour Symfony
-RUN a2enmod rewrite
+# Installer Composer manuellement
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Installe Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copie ton projet Symfony dans le conteneur
-COPY . /var/www/html/
-
-# Définit le répertoire de travail
+# Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Installe les dépendances de Symfony
-RUN composer install --no-dev --optimize-autoloader
+# Copier les fichiers de l’application
+COPY . .
 
-# Expose le port 80
+# Installer les dépendances Symfony
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+
+# Exposer le port 80
 EXPOSE 80
+
+# Lancer le serveur Apache
+CMD ["apache2-foreground"]
