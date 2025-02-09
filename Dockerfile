@@ -33,8 +33,16 @@ COPY --chown=appuser . /var/www/html
 # Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Installer les dépendances Composer
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+# Vider manuellement le cache
+RUN rm -rf var/cache/* var/log/*
+RUN mkdir -p var/cache var/log
+RUN chmod -R 777 var/cache var/log
+
+# Installer les dépendances Composer (sans scripts)
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-scripts
+
+# Exécuter les scripts Symfony manuellement
+RUN php bin/console cache:clear --env=prod
 
 # Exposer le port 9000 pour PHP-FPM
 EXPOSE 9000
