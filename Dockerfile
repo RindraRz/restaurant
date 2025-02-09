@@ -42,7 +42,7 @@ RUN chmod -R 777 var/cache var/log
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-scripts
 
 # Exécuter les scripts Symfony manuellement
-RUN php bin/console cache:clear --env=prod
+RUN php bin/console cache:clear --env=prod -v || cat var/log/prod.log
 
 # Exposer le port 9000 pour PHP-FPM
 EXPOSE 9000
