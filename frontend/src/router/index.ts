@@ -12,13 +12,13 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/login',
+      path: '/',
       name: 'Login',
       component: Login,
       meta: { requiresAuth: false }
     },
     {
-      path: '/',
+      path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard,
       meta: { requiresAuth: true }

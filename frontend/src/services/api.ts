@@ -73,7 +73,7 @@ export const ingredientApi = {
     await delay(500)
     try {
       console.log(id)
-      const response = await axios.delete(URL_API+'ingredients/'+id,{headers});
+      await axios.delete(URL_API+'ingredients/'+id,{headers});
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'ingrédient:', error);
       throw error;
@@ -142,7 +142,7 @@ export const dishApi = {
     await delay(500)
     try {
       console.log(id)
-      const response = await axios.delete(URL_API+'plats/'+id,{headers});
+       await axios.delete(URL_API+'plats/'+id,{headers});
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'ingrédient:', error);
       throw error;
@@ -283,7 +283,7 @@ export const recipeApi = {
     await delay(500)
     try {
       console.log(id)
-      const response = await axios.delete(URL_API+'recettes/'+id,{headers});
+       await axios.delete(URL_API+'recettes/'+id,{headers});
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'ingrédient:', error);
       throw error;

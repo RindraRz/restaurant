@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import DashboardStats from '../components/DashboardStats.vue'
+
 import { useRouter } from 'vue-router'; // Importez useRouter pour la redirection
-import Loader from '../components/Loader.vue';
 
 const router = useRouter();
 

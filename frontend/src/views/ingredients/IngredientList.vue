@@ -31,10 +31,7 @@ const deleteIngredient = async (id: number) => {
 }
 
 onMounted(fetchIngredients)
-const logout = () => {
-  localStorage.removeItem('authToken'); 
-  router.push('/login'); 
-};
+
 </script>
 
 <template>

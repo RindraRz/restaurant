@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import type { Recipe, Dish, Ingredient, RecipeIngredient } from '../../types'
+import type { Recipe, Dish, Ingredient} from '../../types'
 import { recipeApi, dishApi, ingredientApi } from '../../services/api'
 
 const router = useRouter()
@@ -14,7 +14,6 @@ const saving = ref(false)
 
 const isEdit = computed(() => route.params.id !== 'new' && route.params.id !== undefined)
 
-const idPlat = ref(0);
 
 onMounted(async () => {
   loading.value = true
