@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     git \
     unzip \
-    nginx \ 
+    nginx \  # Ajoutez Nginx
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql xml zip
 
@@ -22,11 +22,16 @@ ENV LIBZIP_LIBS "-L/usr/lib/x86_64-linux-gnu -lzip"
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Créer un utilisateur non-root
+# Créer un utilisateur non-root pour l'application
 RUN useradd -m appuser && chown -R appuser /var/www/html
 
-# Basculer vers l'utilisateur non-root
-USER appuser
+# Créer un utilisateur pour Nginx
+RUN useradd -r -s /bin/false nginxuser
+
+# Donner les permissions nécessaires à Nginx
+RUN mkdir -p /var/lib/nginx/body /var/log/nginx /var/cache/nginx
+RUN chown -R nginxuser:nginxuser /var/lib/nginx /var/log/nginx /var/cache/nginx
+RUN chmod -R 755 /var/lib/nginx /var/log/nginx /var/cache/nginx
 
 # Copier les fichiers de l'application
 COPY --chown=appuser . /var/www/html
@@ -43,11 +48,15 @@ RUN chmod -R 777 var/cache var/log
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-scripts
 
 
+
 # Copier la configuration Nginx
-COPY --chown=appuser ./docker/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=nginxuser ./docker/nginx.conf /etc/nginx/nginx.conf
 
 # Exposer le port 80 pour Nginx
 EXPOSE 80
+
+# Basculer vers l'utilisateur Nginx
+USER nginxuser
 
 # Lancer Nginx et PHP-FPM
 CMD ["sh", "-c", "nginx && php-fpm"]
