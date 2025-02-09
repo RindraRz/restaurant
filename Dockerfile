@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     git \
     unzip \
-    nginx \ 
+    nginx \  # Ajoutez Nginx
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql xml zip
 
@@ -29,9 +29,9 @@ RUN useradd -m appuser && chown -R appuser /var/www/html
 RUN useradd -r -s /bin/false nginxuser
 
 # Donner les permissions nécessaires à Nginx
-RUN mkdir -p /var/lib/nginx/body /var/log/nginx /var/cache/nginx
-RUN chown -R nginxuser:nginxuser /var/lib/nginx /var/log/nginx /var/cache/nginx
-RUN chmod -R 755 /var/lib/nginx /var/log/nginx /var/cache/nginx
+RUN mkdir -p /var/log/nginx /var/cache/nginx /run/nginx /var/run/php
+RUN chown -R nginxuser:nginxuser /var/log/nginx /var/cache/nginx /run/nginx /var/run/php
+RUN chmod -R 755 /var/log/nginx /var/cache/nginx /run/nginx /var/run/php
 
 # Copier les fichiers de l'application
 COPY --chown=appuser . /var/www/html
@@ -47,7 +47,8 @@ RUN chmod -R 777 var/cache var/log
 # Installer les dépendances Composer (sans scripts)
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-scripts
 
-
+# Exécuter les scripts Symfony manuellement
+RUN php bin/console cache:warmup --env=prod -v || (cat var/log/prod.log && exit 1)
 
 # Copier la configuration Nginx
 COPY --chown=nginxuser ./docker/nginx.conf /etc/nginx/nginx.conf
