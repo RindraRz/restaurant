@@ -7,10 +7,16 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libxml2-dev \
     zlib1g-dev \
+    libzip-dev \
     git \
     unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql xml zip
+
+# Configurer pkg-config pour libzip
+ENV PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
+ENV LIBZIP_CFLAGS "-I/usr/include"
+ENV LIBZIP_LIBS "-L/usr/lib/x86_64-linux-gnu -lzip"
 
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
