@@ -47,8 +47,6 @@ RUN chmod -R 777 var/cache var/log
 # Installer les dépendances Composer (sans scripts)
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-scripts
 
-# Exécuter les scripts Symfony manuellement
-RUN php bin/console cache:warmup --env=prod -v || (cat var/log/prod.log && exit 1)
 
 # Copier la configuration Nginx
 COPY --chown=nginxuser ./docker/nginx.conf /etc/nginx/nginx.conf
